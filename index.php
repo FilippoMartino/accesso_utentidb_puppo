@@ -29,7 +29,7 @@
 		  <div class="collapse navbar-collapse" id="navbarNavDropdown">
 		    <ul class="navbar-nav">
 			    <li class="nav-item">
-			   		<button onclick="window.location.href='sign_in.php'" class="login my_menu-button btn btn-outline-success" type="button">
+			   		<button onclick="window.location.href='login.php'" class="login my_menu-button btn btn-outline-success" type="button">
 			   			Login
 			   		</button>
 			    </li>

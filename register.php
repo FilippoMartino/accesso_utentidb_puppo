@@ -29,7 +29,7 @@
 		  <div class="collapse navbar-collapse" id="navbarNavDropdown">
 		    <ul class="navbar-nav">
 			    <li class="nav-item">
-			   		<button  onclick="window.location.href='sign_in.php'" class="login my_menu-button btn btn-outline-success" type="button">
+			   		<button  onclick="window.location.href='login.php'" class="login my_menu-button btn btn-outline-success" type="button">
 			   			Login
 			   		</button>
 			    </li>
@@ -37,7 +37,8 @@
 			</div>
 		</nav>
 
-		<script type="text/javascript">
+	<!--	script con tutto l'occorrente per effettuare i controlli sui dati inseriti dall'utente nel form  -->
+	<script type="text/javascript">
 
 				function check_form() {
 
@@ -113,7 +114,7 @@
             <label>Password *</label>
         </div>
         <div class="group">
-          <button onclick="check_form()" name="registration_button">Registrati</button>
+          <button class="my_generic_button" onclick="check_form()" name="registration_button">Registrati</button>
         </div>
       </form>
     </div>
@@ -125,7 +126,7 @@
 
 		<?php else: ?>
 
-			<h1>Something else</h1>
+			<h1>Error? WTF?!</h1>
 
 		<?php endif; ?>
 

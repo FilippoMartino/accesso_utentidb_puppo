@@ -99,26 +99,38 @@
 	        }
 
 					$is_ok = false;
+
 	    }
 
 		}
 
-?>
 
-      <nav class="navbar my_navbar sticky-top  navbar-expand-lg navbar-dark bg-dark">
-  		  <a class="navbar-brand site_title" href="index.php">Home</a>
-  		</nav>
+
+		?>
+
+				<nav class="navbar my_navbar sticky-top  navbar-expand-lg navbar-dark bg-dark">
+				  <a class="navbar-brand site_title" href="index.php">Home</a>
+						<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+				  		<span class="navbar-toggler-icon"></span>
+				  	</button>
+				  <div class="collapse navbar-collapse" id="navbarNavDropdown">
+				    <ul class="navbar-nav">
+						</ul>
+					</div>
+				</nav>
 
 			<?php
 
-					if ($is_ok){
-						echo $message . $user;
-					}else{
-						echo $message;
-					}
+			$username = $_SESSION['user_id'];
+
+				if ($is_ok)
+					echo "<h1 class=\"homepage_user_message\">$message  $username</h1>";
+				else
+					echo "<h1 class=\"homepage_user_message\">$message</h1>";
+
+			?>
 
 
-			 ?>
 
 
 	</body>
