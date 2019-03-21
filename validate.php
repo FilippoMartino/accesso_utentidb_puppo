@@ -5,7 +5,6 @@
 
 		<!-- Link al mio foglio di stile -->
 		<link rel="stylesheet" href="my_personal_css.css">
-
 		<!-- Link alle cdn di bootstrap css, js e jquery-->
 
 		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
@@ -24,48 +23,29 @@
     /*  Inizio sessione */
     session_start();
 
-    /*  Controllo che i campi username e password siano stati compilati */
-
-    if(!isset( $_POST['username'], $_POST['password'])) {
-
-      $message = 'I campi password e username devono essere compilati<br>';
-    }
-
-
-    elseif (strlen( $_POST['username']) > 50 || strlen($_POST['username']) < 0){
-
-      $message =  $message . 'La lunghezza del nome utente non è corretta<br>';
-    }
-
-    elseif (strlen( $_POST['password']) > 100 || strlen($_POST['password']) < 0){
-
-      $message = 'La lunghezza della password non è corretta<br>';
-    }
-
-    elseif (ctype_alnum($_POST['username']) != true){
-
-    $message = "Il nome utente dev'essere alfanumerico<br>";
-
-    }
-
-    elseif (ctype_alnum($_POST['password']) != true){
-
-        $message = "La password deve essere alfanumerica<br>";
-
-    }
-
-    else {
-
-    /*  Se i dati inseriti sono corretti "sanizziamo" il formato della variabile
-        (abbastanza inutile a mio avviso, ma mi attengo all'esercizio)
+		/*  Non è necessario alcun tipo di controllo, dato che tutto viene controllato
+				dal client mediante uno script
     */
 
-    $username = filter_var($_POST['username'], FILTER_SANITIZE_STRING);
-    $password = filter_var($_POST['password'], FILTER_SANITIZE_STRING);
-    $email = $_POST['email'];
 
-    /*  Crittografiamo la password  */
-    $password = sha1( $password );
+
+		if (isset($_POST['username']) && isset($_POST['password']) && isset($_POST['email'])){
+
+	    $username = $_POST['username'];
+	    $password = $_POST['password'];
+	    $email = $_POST['email'];
+
+			/*  Crittografiamo la password  */
+	    $password = sha1( $password );
+			$is_ok = true;
+
+		}else{
+
+			$message = "Errore durante la ricezione dei dati";
+			$is_ok = false;
+		}
+
+
 
 	   $tipo = "N";
 
@@ -82,90 +62,64 @@
     /*** database name ***/
     $mysql_dbname = 'esercitazione_accesso_db';
 
-    try{
+		if ($is_ok){
 
-        $dbh = new PDO("mysql:host=$mysql_hostname;dbname=$mysql_dbname", $mysql_username, $mysql_password);
+	    try{
 
-        /*  Intercettiamo eventuali errori di connessione */
-        $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+	        $dbh = new PDO("mysql:host=$mysql_hostname;dbname=$mysql_dbname", $mysql_username, $mysql_password);
 
-        /*  Prepariamo l'inserimento dei dati all'interno del database  */
-        $stmt = $dbh->prepare("INSERT INTO utenti (nome_utente, password, email) VALUES (:username, :password, :email )");
+	        /*  Intercettiamo eventuali errori di connessione */
+	        $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-        /*  Associamo le 'etichette' usate nella quary alle rispettive variabili */
-        $stmt->bindParam(':username', $username, PDO::PARAM_STR);
-        $stmt->bindParam(':password', $password, PDO::PARAM_STR);
-		    $stmt->bindParam(':email', $email, PDO::PARAM_STR);
+	        /*  Prepariamo l'inserimento dei dati all'interno del database  */
+	        $stmt = $dbh->prepare("INSERT INTO utenti (nome_utente, password, email) VALUES (:username, :password, :email )");
 
-        /*  Eseguiamo la query  */
-        $stmt->execute();
+	        /*  Associamo le 'etichette' usate nella quary alle rispettive variabili */
+	        $stmt->bindParam(':username', $username, PDO::PARAM_STR);
+	        $stmt->bindParam(':password', $password, PDO::PARAM_STR);
+			    $stmt->bindParam(':email', $email, PDO::PARAM_STR);
 
-        $message = 'Utente aggiunto correttamente<br>';
-        $_SESSION['user_id'] = $username;
+	        /*  Eseguiamo la query  */
+	        $stmt->execute();
 
-    /*  Intercettiamo eventuali errori  */
-    }catch(Exception $e){
+	        $message = 'Utente aggiunto correttamente<br>';
 
-        /*  Controlliamo che l'username non sia già presente  */
 
-        if( $e->getCode() == 23000){
+	        $_SESSION['user_id'] = $username;
 
-            $message = 'L\'username esiste già<br>';
-        }
-        else{
+	    /*  Intercettiamo eventuali errori  */
+	    }catch(Exception $e){
 
-            $message = 'Non riusciamo a soddisfare la richiesta in questo momento<br>';
-        }
-    }
-}
+	        /*  Controlliamo che l'username non sia già presente  */
+
+	        if( $e->getCode() == 23000){
+	            $message = 'L\'username esiste già<br>';
+	        }else{
+	            $message = 'Non riusciamo a soddisfare la richiesta in questo momento<br>';
+	        }
+
+					$is_ok = false;
+	    }
+
+		}
 
 ?>
 
-		<?php if(! isset( $_SESSION['user_id'] ) ): ?>
-
-  	<nav class="navbar my_navbar sticky-top  navbar-expand-lg navbar-dark bg-dark">
-		  <a class="navbar-brand site_title" href="index.php">Home</a>
-				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-		  		<span class="navbar-toggler-icon"></span>
-		  	</button>
-		  <div class="collapse navbar-collapse" id="navbarNavDropdown">
-		    <ul class="navbar-nav">
-			    <li class="nav-item">
-			   		<button  onclick="window.location.href='sign_in.php'" class="login my_menu-button btn btn-outline-success" type="button">
-			   			Login
-			   		</button>
-			    </li>
-				</ul>
-			</div>
-		</nav>
-
-    <?php echo "<h1 class=\"homepage_user_message\">$message</h1>"; ?>
-
-</div>
-
-
-
-		<?php else: ?>
-
       <nav class="navbar my_navbar sticky-top  navbar-expand-lg navbar-dark bg-dark">
   		  <a class="navbar-brand site_title" href="index.php">Home</a>
-  				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-  		  		<span class="navbar-toggler-icon"></span>
-  		  	</button>
-  		  <div class="collapse navbar-collapse" id="navbarNavDropdown">
-  		    <ul class="navbar-nav">
-  			    <li class="nav-item">
-  			   		<button  onclick="window.location.href='sign_in.php'" class="login my_menu-button btn btn-outline-success" type="button">
-  			   			Esci
-  			   		</button>
-  			    </li>
-  				</ul>
-  			</div>
   		</nav>
 
-      <?php echo "<h1 class=\"homepage_user_message\">Benvenuto $username!</h1>"; ?>
+			<?php
 
-		<?php endif; ?>
+					if ($is_ok){
+						echo $message . $user;
+					}else{
+						echo $message;
+					}
+
+
+			 ?>
+
 
 	</body>
 </html>

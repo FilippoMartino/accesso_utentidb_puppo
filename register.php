@@ -37,31 +37,83 @@
 			</div>
 		</nav>
 
+		<script type="text/javascript">
 
+				function check_form() {
+
+					var username = registration_form.username.value;
+					var email = registration_form.email.value;
+					var password = registration_form.password.value;
+					var is_ok = true;
+
+					//Controllo nome utente
+
+					if ((username == "") || (username == "undefined")) {
+						alert("Il nome è richiesto");
+						registration_form.username.focus();
+						is_ok = false;
+					}
+
+					if (username.lenght > 50) {
+						alert("Il nome  è troppo lungo");
+						registration_form.username.focus();
+						is_ok = false;
+					}
+
+					/*
+
+						Controllo sulla password non necessario perchè già vincolato dal
+						form, viene generato un messaggio in automatico se non si inserisce
+						nessun valore.
+
+					*/
+
+					//Controllo email
+
+					//credit: https://www.html.it/articoli/validare-e-inviare-un-form-con-javascript/
+					var email_reg_exp = /^([a-zA-Z0-9_.-])+@(([a-zA-Z0-9-]{2,})+.)+([a-zA-Z0-9]{2,})+$/;
+
+
+					if (!email_reg_exp.test(email) || (email == "") || (email == "undefined")) {
+						alert("Inserire una mail valida");
+						registration_form.email.focus();
+						is_ok = false;
+
+					}
+					if (is_ok){
+
+						document.registration_form.action = "validate.php/";
+						document.registration_form.submit();
+
+					}
+
+				}
+
+		</script>
 
   <div class="container">
     <div class="my_container">
-      <form action="validate.php" method="post">
+      <form  name="registration_form" method="post">
         <div class="group">
           <input type="text" id="username" name="username" required>
             <span class="highlight"></span>
             <span class="bar"></span>
-            <label>Nome</label>
+            <label>Nome *</label>
         </div>
         <div class="group">
           <input type="text" id="email" name="email" required>
             <span class="highlight"></span>
             <span class="bar"></span>
-            <label>Email</label>
+            <label>Email *</label>
         </div>
         <div class="group">
-          <input type="text" id="password" name="password" required>
+          <input type="password" id="password" name="password" required>
             <span class="highlight"></span>
             <span class="bar"></span>
-            <label>Password</label>
+            <label>Password *</label>
         </div>
         <div class="group">
-          <button type="submit" name="registration_button">Registrati</button>
+          <button onclick="check_form()" name="registration_button">Registrati</button>
         </div>
       </form>
     </div>
